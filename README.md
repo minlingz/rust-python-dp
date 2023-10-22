@@ -1,33 +1,59 @@
-# Overview
-`hashmap-count` is a command-line tool that counts the number of occurrences of each integer in a comma-separated list of integers. It then returns a list of the top n integers with the highest counts, where n is a user-specified parameter.
+# Performance Report
 
-# Installation
-To install `hashmap-count`, you need to have Rust and Cargo installed on your system. You can install Rust and Cargo by following the instructions on the [official Rust website](https://www.rust-lang.org/tools/install).
+## 1. Introduction
+I wrote a Python program `main.py` that run 10000 times to add the sum of the first 10,000 positive integers and then subtract the first 10,000 positive integers.  The code is as follows:
+```python
+import time
 
-Once Rust and Cargo are installed, you can install `hashmap-count` by running the following command:
-```
-cargo install hashmap-count
+start_time = time.time()
+
+for j in range(10000): 
+    sum = 0
+    for i in range(10000):
+        sum += i 
+    for i in range(10000):
+        sum -= i
+end_time = time.time()
+elapsed_time = end_time - start_time
+
+print(f"Result: {sum}")
+print(f"Python elapsed time: {elapsed_time:.2f} seconds")
 ```
 
-This will download the source code, compile it, and install the binary on your system.
+Then I rewrote the same program `main.rs` in Rust.  The code is as follows:
+```rust
+use std::time::Instant;
 
-# Usage
-To use `hashmap-count`, run the following command:
+fn main() {
+    let start = Instant::now();
+    let mut sum = 0;
+    for _j in 0..10000 {
+        
+        for i in 0..10000 {
+            sum += i;
+        }
+        for i in 0..10000 {
+            sum -= i;
+        }
+    }
+    println!("Result: {}", sum);
+    let duration = start.elapsed(); 
+    println!("Rust elapsed time: is: {:?}", duration);
+} 
 ```
-hashmap-count <input>
+## 2. Performance mesurement
+I use the `time` command in the terminal to run both the Python code and the Rust executable file and measure their execution time:
 ```
-where `<input>` is a comma-separated list of integers.
+$ time python main.py
+$ time ./main
+```
 
-For example, to count the occurrences of the integers 1, 2, 3, 4, and 5 run the following command:
-```
-hashmap-count 1,2,3,2,1
-```
-This will output the following:
-```
-Result: [(1, 2), (2, 2), (3, 1)]
-```
-This indicates that the integers 1 and 2 each occurred twice in the input list and the integer 3 occurred once.
+## 3. Result
+The result is as follows:
+| Language | Execution Time | CPU Usage |
+| :---: | :---: | :---: |
+|Python | 8.89 seconds | 99% |
+| Rust | 0.65 seconds | 74% |
 
-
-# Conclusion
-`hashmap-count` is a simple and useful tool for counting the occurrences of integers in a list. It is easy to install and use, and can be a valuable addition to any developer's toolkit.
+## 4. Conclusion
+As you can see, the Rust code is significantly faster than the Python code, and it also uses less CPU. This is because Rust is a compiled language, while Python is an interpreted language.  The Rust compiler compiles the code into machine code, which is then executed by the CPU.  The Python interpreter interprets the code line by line and executes it.  Therefore, the Rust code is faster than the Python code.
